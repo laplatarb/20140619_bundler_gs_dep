@@ -1,0 +1,230 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1, maximum-scale=1')
+    title Bundler / gs+dep
+
+    // build:css styles/styles.css
+    //- Check out 'src/bower_components/prism/themes/' for available themes
+    link(rel='stylesheet', type='text/css', href='bower_components/prism/themes/prism-tomorrow.css')
+    link(rel='stylesheet', type='text/css', href='styles/main.css')
+    // endbuild
+
+  body
+
+    article
+
+      section.white-background
+        h1 Bundler / gs+dep
+
+      section.white-background
+        h2 (Background)
+
+      section(data-bespoke-state="rubygems-background").rubygems-logo
+
+      section(data-bespoke-state="rubygems-background").rubygems
+        h2 Rubygems
+        h3.bullet Una gema (o Ruby gem) es la forma de distribuir las librerías / frameworks
+        ul
+          li Una gema tiene un nombre, una versión y una plataforma. Ej: rake-10.3.2.gem
+          li Contiene código, documentación y la especificación (gemspec)
+
+      section.white-background
+        h2 ¿Cual es el problema?
+
+      section.white-background
+        h2 Las gemas son instaladas en el "gemset" global
+        h3 Normalmente, este gemset global es $RUBY_HOME/lib/ruby/gems/2.1.0/gems/
+
+      section.white-background
+        h2 Pueden instalarse varias versiones de la misma gema (incluso incompatibles!)
+        hr
+        pre.language-ruby
+          code.language-ruby.
+            require 'rake' # *siempre* va a cargar la última versión de rake
+
+      section.white-background
+        h2 Posible escenario
+        h3 Tenemos instaladas las gemas a-1.0.0, a-2.0.0 y b-1.0.0, la cual depende de a-1.0.0
+        hr
+        pre.language-ruby
+          code.language-ruby.
+            require 'a'
+            require 'b'
+        hr
+        h3 ¿Qué pasa con esto?
+
+      section(data-bespoke-state="").boom.full-bg
+
+      section(data-bespoke-state="bundler-background").bundler-logo
+
+      section(data-bespoke-state="bundler-background").bundler
+        h2 ¿Qué es?
+        h3.bullet
+        ul
+          li Provee un entorno consistente para proyectos Ruby
+          li Rastrea e instala gemas en las versiones especificadas
+          li "Bundler is an exit from dependency hell"
+
+      section(data-bespoke-state="bundler-background").bundler
+        h2 Instalación
+        hr
+        <pre class="language-bash"><code>$ gem install bundler</code></pre>
+
+      section(data-bespoke-state="bundler-background").bundler
+        h2 Iniciar un proyecto que use bundler
+        hr
+        <pre class="language-bash"><code>$ bundle init</code></pre>
+        hr
+        h3 Genera un archivo llamado Gemfile (también podemos crearlo manualmente!)
+
+      section(data-bespoke-state="bundler-background").bundler
+        h2 Gemfile
+        h3.bullet
+        ul
+          li Define las dependencias del proyecto
+          li Las gemas se pueden instalar desde Rubygems u otro Gemcutter
+          li También se pueden instalar desde un repositorio git o más fácil, desde GitHub
+          li Podemos definir grupos de gemas
+
+      section(data-bespoke-state="bundler-background").bundler
+        h2 Gemfile de ejemplo
+        hr
+        pre.language-ruby
+          code.language-ruby.
+            # donde va a ir a buscar las gemas:
+            source 'https://rubygems.org'
+
+            gem 'hobbit' # si no especificamos versión, va a buscar la última
+            # o incluso podemos generar la gema desde un repositorio git:
+            # gem 'hobbit', github: 'patriciomacadden/hobbit'
+
+            # podemos especificar en que grupo (o entorno) cargar las gemas:
+            gem 'oktobertest', group: :test
+
+      section(data-bespoke-state="bundler-background").bundler
+        h2 Instalar las dependencias
+        hr
+        <pre class="language-bash"><code>$ bundle # o bundle install</code></pre>
+        hr
+        h3 Calcula un grafo de dependencias e instala todas las gemas en el $GEM_HOME
+
+      section(data-bespoke-state="bundler-background").bundler
+        h2 ¡Pero esto no es todo!
+        h3.bullet
+        ul
+          li Es necesario que el proyecto cargue las gemas correctamente
+
+      section(data-bespoke-state="bundler-background").bundler
+        h2 2 alternativas
+        h3.bullet
+        ul
+          li Bundler.require
+          li bundler/setup
+
+      section(data-bespoke-state="bundler-background").bundler
+        h2 Bundler.require
+        pre.language-ruby
+          code.language-ruby.
+            require 'bundler'
+
+            # bundler carga *todas* las gemas especificadas en el Gemfile
+            Bundler.require
+        hr
+        h3 Bundler.require acepta argumentos, siendo estos los grupos de gemas
+
+      section(data-bespoke-state="bundler-background").bundler
+        h2 bundler/setup
+        pre.language-ruby
+          code.language-ruby.
+            require 'bundler/setup'
+
+            # bundler no carga las gemas especificadas en el Gemfile,
+            # hay que hacerlo explícitamente
+            require 'hobbit'
+        hr
+        h3 Nota: es más rápida (en términos de performance) esta forma!
+
+      section.white-background
+        h1 gs+dep
+
+      section.white-background
+        h2 gs
+        h3.bullet "recreates the absolutely minimal feature set for creating and using gemsets"
+        ul
+          li Inicia un shell session y configura las variables GEM_HOME, GEM_PATH y PATH para que apunten a $PWD/.gs
+          li Configura la variable GS_NAME con el nombre del gemset actual
+          li NO instala ninguna gema
+
+      section.white-background
+        h2 Instalación
+        hr
+        <pre class="language-bash"><code>$ gem install gs</code></pre>
+
+      section.white-background
+        h2 Iniciar un gemset
+        hr
+        <pre class="language-bash"><code>$ gs init</code></pre>
+
+      section.white-background
+        h2 Iniciar un subshell
+        hr
+        <pre class="language-bash"><code>$ gs</code></pre>
+        hr
+        h3 Todos los comandos posteriores (por ejemplo rake) usarán las gemas del gemset
+
+      section.white-background
+        h2 dep
+        h3 Basic dependency tracking
+
+      section.white-background
+        h2 Instalación
+        hr
+        <pre class="language-bash"><code>$ gem install dep</code></pre>
+
+      section.white-background
+        h2 Agregar una dependencia
+        hr
+        <pre class="language-bash"><code>$ dep add hobbit</code></pre>
+        hr
+        h3 Obtiene la última versión de la gema y la agrega al archivo .gems
+
+      section.white-background
+        h2 Instalar dependencias
+        hr
+        <pre class="language-bash"><code>$ dep install</code></pre>
+        hr
+        h3 Instala todas las dependencias (las que no estén ya instaladas)
+
+      section.white-background
+        h2 Eliminar una dependencia
+        hr
+        <pre class="language-bash"><code>$ dep rm hobbit</code></pre>
+        hr
+        h3 Elimina la gema del archivo .gems
+
+      section.white-background
+        h2 Chequear dependencias
+        hr
+        <pre class="language-bash"><code>$ dep check</code></pre>
+
+      section.white-background
+        h1 ¿Preguntas?
+
+      section.white-background
+        h1 ¡Gracias!
+
+    // build:js scripts/scripts.js
+    script(src='bower_components/bespoke.js/dist/bespoke.min.js')
+    script(src='bower_components/bespoke-keys/dist/bespoke-keys.min.js')
+    script(src='bower_components/bespoke-touch/dist/bespoke-touch.min.js')
+    script(src='bower_components/bespoke-bullets/dist/bespoke-bullets.min.js')
+    script(src='bower_components/bespoke-scale/dist/bespoke-scale.min.js')
+    script(src='bower_components/bespoke-hash/dist/bespoke-hash.min.js')
+    script(src='bower_components/bespoke-progress/dist/bespoke-progress.min.js')
+    script(src='bower_components/bespoke-state/dist/bespoke-state.min.js')
+    script(src='bower_components/bespoke-forms/dist/bespoke-forms.min.js')
+    script(src='bower_components/prism/prism.js')
+    script(src='scripts/main.js')
+    // endbuild
