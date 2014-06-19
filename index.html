@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>Bundler / gs+dep</title>
+    <link rel="stylesheet" href="styles/styles.css"/>
+  </head>
+  <body>
+    <article>
+      <section class="white-background">
+        <h1>Bundler / gs+dep</h1>
+      </section>
+      <section class="white-background">
+        <h2>(Background)</h2>
+      </section>
+      <section data-bespoke-state="rubygems-background" class="rubygems-logo"></section>
+      <section data-bespoke-state="rubygems-background" class="rubygems">
+        <h2>Rubygems</h2>
+        <h3 class="bullet">Una gema (o Ruby gem) es la forma de distribuir las librerías / frameworks</h3>
+        <ul>
+          <li>Una gema tiene un nombre, una versión y una plataforma. Ej: rake-10.3.2.gem</li>
+          <li>Contiene código, documentación y la especificación (gemspec)</li>
+        </ul>
+      </section>
+      <section class="white-background">
+        <h2>¿Cual es el problema?</h2>
+      </section>
+      <section class="white-background">
+        <h2>Las gemas son instaladas en el "gemset" global</h2>
+        <h3>Normalmente, este gemset global es $RUBY_HOME/lib/ruby/gems/2.1.0/gems/</h3>
+      </section>
+      <section class="white-background">
+        <h2>Pueden instalarse varias versiones de la misma gema (incluso incompatibles!)</h2>
+        <hr>
+        <pre class="language-ruby"><code class="language-ruby">require 'rake' # *siempre* va a cargar la última versión de rake
+</code></pre>
+      </section>
+      <section class="white-background">
+        <h2>Posible escenario</h2>
+        <h3>Tenemos instaladas las gemas a-1.0.0, a-2.0.0 y b-1.0.0, la cual depende de a-1.0.0</h3>
+        <hr>
+        <pre class="language-ruby"><code class="language-ruby">require 'a'
+require 'b'</code></pre>
+        <hr>
+        <h3>¿Qué pasa con esto?</h3>
+      </section>
+      <section data-bespoke-state="" class="boom full-bg"></section>
+      <section data-bespoke-state="bundler-background" class="bundler-logo"></section>
+      <section data-bespoke-state="bundler-background" class="bundler">
+        <h2>¿Qué es?</h2>
+        <h3 class="bullet"></h3>
+        <ul>
+          <li>Provee un entorno consistente para proyectos Ruby</li>
+          <li>Rastrea e instala gemas en las versiones especificadas</li>
+          <li>"Bundler is an exit from dependency hell"</li>
+        </ul>
+      </section>
+      <section data-bespoke-state="bundler-background" class="bundler">
+        <h2>Instalación</h2>
+        <hr><pre class="language-bash"><code>$ gem install bundler</code></pre>
+      </section>
+      <section data-bespoke-state="bundler-background" class="bundler">
+        <h2>Iniciar un proyecto que use bundler</h2>
+        <hr><pre class="language-bash"><code>$ bundle init</code></pre>
+        <hr>
+        <h3>Genera un archivo llamado Gemfile (también podemos crearlo manualmente!)</h3>
+      </section>
+      <section data-bespoke-state="bundler-background" class="bundler">
+        <h2>Gemfile</h2>
+        <h3 class="bullet"></h3>
+        <ul>
+          <li>Define las dependencias del proyecto</li>
+          <li>Las gemas se pueden instalar desde Rubygems u otro Gemcutter</li>
+          <li>También se pueden instalar desde un repositorio git o más fácil, desde GitHub</li>
+          <li>Podemos definir grupos de gemas</li>
+        </ul>
+      </section>
+      <section data-bespoke-state="bundler-background" class="bundler">
+        <h2>Gemfile de ejemplo</h2>
+        <hr>
+        <pre class="language-ruby"><code class="language-ruby"># donde va a ir a buscar las gemas:
+source 'https://rubygems.org'
+
+gem 'hobbit' # si no especificamos versión, va a buscar la última
+# o incluso podemos generar la gema desde un repositorio git:
+# gem 'hobbit', github: 'patriciomacadden/hobbit'
+
+# podemos especificar en que grupo (o entorno) cargar las gemas:
+gem 'oktobertest', group: :test
+</code></pre>
+      </section>
+      <section data-bespoke-state="bundler-background" class="bundler">
+        <h2>Instalar las dependencias</h2>
+        <hr><pre class="language-bash"><code>$ bundle # o bundle install</code></pre>
+        <hr>
+        <h3>Calcula un grafo de dependencias e instala todas las gemas en el $GEM_HOME</h3>
+      </section>
+      <section data-bespoke-state="bundler-background" class="bundler">
+        <h2>¡Pero esto no es todo!</h2>
+        <h3 class="bullet"></h3>
+        <ul>
+          <li>Es necesario que el proyecto cargue las gemas correctamente</li>
+        </ul>
+      </section>
+      <section data-bespoke-state="bundler-background" class="bundler">
+        <h2>2 alternativas</h2>
+        <h3 class="bullet"></h3>
+        <ul>
+          <li>Bundler.require</li>
+          <li>bundler/setup</li>
+        </ul>
+      </section>
+      <section data-bespoke-state="bundler-background" class="bundler">
+        <h2>Bundler.require</h2>
+        <pre class="language-ruby"><code class="language-ruby">require 'bundler'
+
+# bundler carga *todas* las gemas especificadas en el Gemfile
+Bundler.require</code></pre>
+        <hr>
+        <h3>Bundler.require acepta argumentos, siendo estos los grupos de gemas</h3>
+      </section>
+      <section data-bespoke-state="bundler-background" class="bundler">
+        <h2>bundler/setup</h2>
+        <pre class="language-ruby"><code class="language-ruby">require 'bundler/setup'
+
+# bundler no carga las gemas especificadas en el Gemfile,
+# hay que hacerlo explícitamente
+require 'hobbit'</code></pre>
+        <hr>
+        <h3>Nota: es más rápida (en términos de performance) esta forma!</h3>
+      </section>
+      <section class="white-background">
+        <h1>gs+dep</h1>
+      </section>
+      <section class="white-background">
+        <h2>gs</h2>
+        <h3 class="bullet">"recreates the absolutely minimal feature set for creating and using gemsets"</h3>
+        <ul>
+          <li>Inicia un shell session y configura las variables GEM_HOME, GEM_PATH y PATH para que apunten a $PWD/.gs</li>
+          <li>Configura la variable GS_NAME con el nombre del gemset actual</li>
+          <li>NO instala ninguna gema</li>
+        </ul>
+      </section>
+      <section class="white-background">
+        <h2>Instalación</h2>
+        <hr><pre class="language-bash"><code>$ gem install gs</code></pre>
+      </section>
+      <section class="white-background">
+        <h2>Iniciar un gemset</h2>
+        <hr><pre class="language-bash"><code>$ gs init</code></pre>
+      </section>
+      <section class="white-background">
+        <h2>Iniciar un subshell</h2>
+        <hr><pre class="language-bash"><code>$ gs</code></pre>
+        <hr>
+        <h3>Todos los comandos posteriores (por ejemplo rake) usarán las gemas del gemset</h3>
+      </section>
+      <section class="white-background">
+        <h2>dep</h2>
+        <h3>Basic dependency tracking</h3>
+      </section>
+      <section class="white-background">
+        <h2>Instalación</h2>
+        <hr><pre class="language-bash"><code>$ gem install dep</code></pre>
+      </section>
+      <section class="white-background">
+        <h2>Agregar una dependencia</h2>
+        <hr><pre class="language-bash"><code>$ dep add hobbit</code></pre>
+        <hr>
+        <h3>Obtiene la última versión de la gema y la agrega al archivo .gems</h3>
+      </section>
+      <section class="white-background">
+        <h2>Instalar dependencias</h2>
+        <hr><pre class="language-bash"><code>$ dep install</code></pre>
+        <hr>
+        <h3>Instala todas las dependencias (las que no estén ya instaladas)</h3>
+      </section>
+      <section class="white-background">
+        <h2>Eliminar una dependencia</h2>
+        <hr><pre class="language-bash"><code>$ dep rm hobbit</code></pre>
+        <hr>
+        <h3>Elimina la gema del archivo .gems</h3>
+      </section>
+      <section class="white-background">
+        <h2>Chequear dependencias</h2>
+        <hr><pre class="language-bash"><code>$ dep check</code></pre>
+      </section>
+      <section class="white-background">
+        <h1>¿Preguntas?</h1>
+      </section>
+      <section class="white-background">
+        <h1>¡Gracias!</h1>
+      </section>
+    </article>
+    <script src="scripts/scripts.js"></script>
+  </body>
+</html>
